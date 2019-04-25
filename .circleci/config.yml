@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: $GOPATH/src/github.com/llcranmer/wrk
+    working_directory: /go/src/github.com/llcranmer/wrk
     steps:
       - checkout
       - run:
