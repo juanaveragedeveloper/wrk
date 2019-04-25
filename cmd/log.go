@@ -19,12 +19,20 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 	"time"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/spf13/cobra"
 )
+
+type conf struct {
+	Basepath        string `yaml:"base_path"`
+	Currentnotebook string `yaml:"current_notebook"`
+}
 
 /*type LogMessage struct {
 	Timestamp string `json:"timestamp"`
@@ -47,6 +55,27 @@ to quickly create a Cobra application.`,
 		all, _ := cmd.Flags().GetString("all")
 		find, _ := cmd.Flags().GetString("find")
 
+		workingdirectory, _ := os.Getwd()
+		configFile := workingdirectory + "\\.config\\config.yml"
+		yamlFile, err := ioutil.ReadFile(configFile)
+		var configuration conf
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		err = yaml.Unmarshal(yamlFile, &configuration)
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(configuration.Currentnotebook)
+		path := strings.Split(configuration.Currentnotebook, "\\")
+		length := len(path)
+		notebook := "\\" + path[length-1] + ".csv"
+
 		if message != "" {
 			if all != "" || find != "" {
 				fmt.Println("Error cannot use find or all when logging a message")
@@ -56,7 +85,7 @@ to quickly create a Cobra application.`,
 			now := time.Now()
 			formattedtime := fmt.Sprintf("%d/%02d/%02dT%02d:%02d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute())
 
-			f, err := os.OpenFile("audit.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+			f, err := os.OpenFile(configuration.Currentnotebook+notebook, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 			if err != nil {
 				fmt.Println("Error: ", err)
 				return
@@ -72,7 +101,7 @@ to quickly create a Cobra application.`,
 
 		if find != "" {
 			// */*/*
-			f, _ := os.Open("audit.csv")
+			f, _ := os.Open(configuration.Currentnotebook + notebook)
 
 			r := csv.NewReader(bufio.NewReader(f))
 
