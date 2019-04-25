@@ -8,13 +8,8 @@ jobs:
       GOBIN: /go/bin/
     steps:
       - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run:
-          name: run build
-          command: |
-            cd wrk
-            dep ensure
-            go build -v
+      - run: go env
+      - run: go install main.go
       - run:
           name: run tests
           command: |
