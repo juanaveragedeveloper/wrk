@@ -14,7 +14,7 @@
 
 package main
 
-import "wrk/cmd"
+import "github.com/juanaveragedeveloper/wrk/cmd"
 
 func main() {
 	cmd.Execute()
