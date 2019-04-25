@@ -12,6 +12,7 @@ jobs:
       - run:
           name: run build
           command: |
+            cd wrk
             dep ensure
             go build -v
       - run:
