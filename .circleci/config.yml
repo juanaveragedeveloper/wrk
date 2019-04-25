@@ -35,6 +35,7 @@ jobs:
           command: |
             gox -os="linux darwin windows" -arch="amd64" -output="dist/spotifycli_{{.OS}}_{{.Arch}}"
             cd dist/ && gzip *
+      - add_ssh_keys
       - run:
           name: create release
           command: |
