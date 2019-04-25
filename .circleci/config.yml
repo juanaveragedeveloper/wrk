@@ -20,7 +20,7 @@ jobs:
             go test -v ./...
   deploy:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     working_directory: /go/src/github.com/juanaveragedeveloper/wrk
     steps:
       - checkout
