@@ -30,14 +30,9 @@ import (
 )
 
 type conf struct {
-	Basepath        string `yaml:"base_path"`
-	Currentnotebook string `yaml:"current_notebook"`
+	Basepath        string `yaml:"basePath"`
+	Currentnotebook string `yaml:"currentNotebook"`
 }
-
-/*type LogMessage struct {
-	Timestamp string `json:"timestamp"`
-	Message   string `json:"message"`
-} */
 
 // logCmd represents the log command
 var logCmd = &cobra.Command{
@@ -55,10 +50,10 @@ to quickly create a Cobra application.`,
 		all, _ := cmd.Flags().GetString("all")
 		find, _ := cmd.Flags().GetString("find")
 
+		var configuration conf
 		workingdirectory, _ := os.Getwd()
 		configFile := workingdirectory + "\\.config\\config.yml"
 		yamlFile, err := ioutil.ReadFile(configFile)
-		var configuration conf
 
 		if err != nil {
 			fmt.Println(err)
@@ -100,7 +95,6 @@ to quickly create a Cobra application.`,
 		}
 
 		if find != "" {
-			// */*/*
 			f, _ := os.Open(configuration.Currentnotebook + notebook)
 
 			r := csv.NewReader(bufio.NewReader(f))
@@ -111,8 +105,13 @@ to quickly create a Cobra application.`,
 					break
 				}
 				message := record[1]
+				recordedtag := record[2]
 				if strings.Contains(message, find) {
-					fmt.Println(record)
+					if tag != "" && recordedtag == tag {
+						fmt.Println(record)
+					} else {
+						fmt.Println(record)
+					}
 				}
 			}
 		}
