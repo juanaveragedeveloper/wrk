@@ -38,7 +38,19 @@ to quickly create a Cobra application.`,
 			name = "Untitled Folder"
 		}
 		path := filepath.Join("/Users/nguyquoc/go/src/wrk/", name)
-		os.MkdirAll(path, os.ModePerm)
+
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			os.MkdirAll(path, os.ModePerm)
+		}
+
+		os.Chdir(path + "/" + name)
+		file, err := os.OpenFile(name+".csv", os.O_CREATE|os.O_WRONLY, 0777)
+		defer file.Close()
+
+		if err != nil {
+			os.Exit(1)
+		}
+
 		fmt.Println(name + " folder created.")
 	},
 }
