@@ -4,8 +4,6 @@ jobs:
     working_directory: /go/src/github.com/llcranmer/wrk
     docker:
       - image: circleci/golang:1.12
-    environment:
-      GOBIN: /go/bin/
     steps:
       - checkout
       - run:
