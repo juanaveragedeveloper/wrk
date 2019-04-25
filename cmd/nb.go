@@ -16,11 +16,20 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/spf13/cobra"
 )
+
+type conf struct {
+	BasePath    string `yaml:"basePath"`
+	CurrentPath string `yaml:"currentPath"`
+}
 
 // nbCmd represents the nb command
 var nbCmd = &cobra.Command{
@@ -33,6 +42,10 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		var c conf
+		c.getConf()
+		fmt.Println(c)
+
 		name, _ := cmd.Flags().GetString("name")
 		swtch, _ := cmd.Flags().GetString("switch")
 
@@ -66,6 +79,19 @@ func createFile(name, path string) {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func (c *conf) getConf() *conf {
+	yamlFile, err := ioutil.ReadFile("conf.yaml")
+	if err != nil {
+		log.Printf("yamlFile.Get err   #%v ", err)
+	}
+	err = yaml.Unmarshal(yamlFile, c)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+
+	return c
 }
 
 func init() {
