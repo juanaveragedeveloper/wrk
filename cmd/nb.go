@@ -34,15 +34,22 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
-		if name == "" {
-			name = "Untitled Folder"
+		swtch, _ := cmd.Flags().GetString("switch")
+
+		//Creating new notebook/csv command
+		if name != "" {
+			path := filepath.Join("/Users/nguyquoc/go/src/wrk/", name)
+
+			createNotebook(path)
+			createFile(name, path)
+
+			fmt.Println(name + " folder created.")
 		}
-		path := filepath.Join("/Users/nguyquoc/go/src/wrk/", name)
 
-		createNotebook(path)
-		createFile(name, path)
-
-		fmt.Println(name + " folder created.")
+		//Switch to another notebook command
+		if swtch != "" {
+			fmt.Println("Switching to notebook - " + swtch)
+		}
 	},
 }
 
@@ -64,6 +71,7 @@ func createFile(name, path string) {
 func init() {
 	rootCmd.AddCommand(nbCmd)
 	nbCmd.Flags().StringP("name", "n", "", "Set name of Folder")
+	nbCmd.Flags().StringP("switch", "s", "", "Switch notebooks")
 
 	// Here you will define your flags and configuration settings.
 
