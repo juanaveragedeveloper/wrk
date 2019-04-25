@@ -47,7 +47,6 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		message, _ := cmd.Flags().GetString("message")
 		tag, _ := cmd.Flags().GetString("tag")
-		all, _ := cmd.Flags().GetString("all")
 		find, _ := cmd.Flags().GetString("find")
 
 		var configuration conf
@@ -132,6 +131,5 @@ func init() {
 	//logCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	logCmd.Flags().StringP("tag", "t", "", "tag your message")
 	logCmd.Flags().StringP("message", "m", "", "Add a message to log to your notebook")
-	logCmd.Flags().StringP("all", "a", "", "Print all logs for a notebook")
 	logCmd.Flags().StringP("find", "f", "", "Find logs")
 }
