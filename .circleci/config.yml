@@ -6,9 +6,11 @@ jobs:
     working_directory: /go/src/github.com/llcranmer/wrk
     steps:
       - checkout
+      - run: go get -u github.com/golang/dep/cmd/dep
       - run:
           name: run build
           command: |
+            dep ensure
             go build -v
       - run:
           name: run tests
