@@ -1,58 +1,52 @@
-version: 2 # use CircleCI 2.0
-jobs: # basic units of work in a run
-  build: # runs not using Workflows must have a `build` job as entry point
-    docker: # run the steps with Docker
-      - image: circleci/golang:1.12 
-    # directory where steps are run. Path must conform to the Go Workspace requirements
-    working_directory:  $GOPATH/src/github.com/llcranmer/wrk
-    steps:
-      - checkout
-      - run:
-        name: Build 
-        command: |
-          go build -v 
-      - run:
-          name: Test 
-          command: |
-            go fmt ./...
-            go get -t ./...
-            go test -v ./...
-
-  deploy: 
+version: 2
+jobs:
+  build:
     docker:
       - image: circleci/golang:1.12
     working_directory: /go/src/github.com/llcranmer/wrk
-    steps: 
-      - checkout 
+    steps:
+      - checkout
+      - run:
+          name: run build
+          command: |
+            go build -v
+      - run:
+          name: run tests
+          command: |
+            go fmt ./...
+            go vet ./...
+            go test -v ./...
+  deploy:
+    docker:
+      - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/llcranmer/wrk
+    steps:
+      - checkout
       - run: go get -u github.com/mitchellh/gox
       - run: go get -u github.com/tcnksm/ghr
       - run: go get -u github.com/stevenmatthewt/semantics
-      - run: 
-          name: cross compile 
-          command: | 
-            gox -os="linux darwin windows" -arch="amd64" -output="dist/wrk_{{.OS}}_{{.Arch}}"
-            cd dist/ && gzip * 
       - run:
-          name: Create release 
+          name: cross compile
+          command: |
+            gox -os="linux darwin windows" -arch="amd64" -output="dist/spotifycli_{{.OS}}_{{.Arch}}"
+            cd dist/ && gzip *
+      - run:
+          name: create release
           command: |
             tag=$(semantics --output-tag)
-            if [ "$tag" ]; then 
+            if [ "$tag" ]; then
               ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $tag dist/
-            else 
+            else
               echo "The commit message(s) did not indicate a major/minor/patch version."
-            fi 
-
-workflows: 
+            fi
+workflows:
   version: 2
-  builds-deploy:
+  build-deploy:
     jobs:
       - build
       - deploy:
           requires:
-            - build 
+            - build
           filters:
             branches:
-              only: master 
-
-
-  
+              only: master
