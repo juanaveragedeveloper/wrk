@@ -16,6 +16,9 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -23,15 +26,38 @@ import (
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "sets up the expected folder structure for the tool to wrk.",
+	Long: ` wrk setup creates a file structure like this 
+				- $PWD/nb/names/hello/hello.cs`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("The function has been called and the dirs have been made")
+		// Getting the paths to be used
+		rootPath, err := os.Getwd()
+		fmt.Println("rootPath ", rootPath)
+		if err != nil {
+			// fmt.Printf("[ERR] Getting path %v", err)
+		}
+		path := filepath.Join(rootPath, "nb")
+		configPath := filepath.Join(rootPath, ".config")
+		// make the default  nb dir and nb hello
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			fmt.Printf("[ERR] Mkdir %v", err)
+		}
+		// make the default config file
+		err = os.MkdirAll(configPath, os.ModePerm)
+		if err != nil {
+			fmt.Printf("[ERR] Mkdir %v", err)
+		}
+
+		// now create the default yaml file
+		os.Chdir(".config")
+		str := fmt.Sprintf("basePath: %s\ncurrentNotebook: %s", rootPath, path)
+		data := []byte(str)
+		err = ioutil.WriteFile("config.yaml", data, 0644)
+		if err != nil {
+			fmt.Printf("[ERR] %v", err)
+		}
+
 	},
 }
 
