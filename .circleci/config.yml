@@ -1,9 +1,9 @@
 version: 2
 jobs:
   build:
+    working_directory: /go/src/github.com/llcranmer/wrk
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/github.com/llcranmer/wrk
     environment:
       GOBIN: /go/bin/
     steps:
