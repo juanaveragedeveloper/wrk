@@ -71,7 +71,7 @@ to quickly create a Cobra application.`,
 		notebook := "\\" + path[length-1] + ".csv"
 
 		if message != "" {
-			if all != "" || find != "" {
+			if find != "" {
 				fmt.Println("Error cannot use find or all when logging a message")
 				return
 			}
