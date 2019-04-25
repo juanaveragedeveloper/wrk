@@ -15,9 +15,12 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -39,13 +42,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("log called")
 		message, _ := cmd.Flags().GetString("message")
-		if message == "" {
-			fmt.Println("Error. Cannot write an empty message.")
-		} else {
+		tag, _ := cmd.Flags().GetString("tag")
+		all, _ := cmd.Flags().GetString("all")
+		find, _ := cmd.Flags().GetString("find")
+
+		if message != "" {
+			if all != "" || find != "" {
+				fmt.Println("Error cannot use find or all when logging a message")
+				return
+			}
+
 			now := time.Now()
-			formattedtime := fmt.Sprintf("%d-%02d-%02dT%02d:%02d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute())
+			formattedtime := fmt.Sprintf("%d/%02d/%02dT%02d:%02d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute())
 
 			f, err := os.OpenFile("audit.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 			if err != nil {
@@ -54,26 +63,30 @@ to quickly create a Cobra application.`,
 			}
 
 			w := csv.NewWriter(f)
-			w.Write([]string{formattedtime, message})
+			w.Write([]string{formattedtime, message, tag})
 			w.Flush()
 
-			/*if _, err := os.Stat("audti.csv"); err == nil {
-				// file exists append message to it
-				f, err := os.OpenFile("audit.csv", os.O_WRONLY|os.O_APPEND, 0644)
-				w := csv.NewWriter(f)
-				w.Write()
-				w.Flush()
-
-			} else if os.IsNotExist(err) {
-				// file does not exist
-				//create file
-				// append message
-			} else {
-				// WTF how did we get here
-			}*/
-
+			fmt.Println("Successfully logged message to notebook")
+			return
 		}
 
+		if find != "" {
+			// */*/*
+			f, _ := os.Open("audit.csv")
+
+			r := csv.NewReader(bufio.NewReader(f))
+
+			for {
+				record, err := r.Read()
+				if err == io.EOF {
+					break
+				}
+				message := record[1]
+				if strings.Contains(message, find) {
+					fmt.Println(record)
+				}
+			}
+		}
 	},
 }
 
@@ -89,5 +102,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	//logCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	logCmd.Flags().StringP("tag", "t", "", "tag your message")
 	logCmd.Flags().StringP("message", "m", "", "Add a message to log to your notebook")
+	logCmd.Flags().StringP("all", "a", "", "Print all logs for a notebook")
+	logCmd.Flags().StringP("find", "f", "", "Find logs")
 }
