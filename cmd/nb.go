@@ -39,20 +39,26 @@ to quickly create a Cobra application.`,
 		}
 		path := filepath.Join("/Users/nguyquoc/go/src/wrk/", name)
 
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			os.MkdirAll(path, os.ModePerm)
-		}
-
-		os.Chdir(path + "/" + name)
-		file, err := os.OpenFile(name+".csv", os.O_CREATE|os.O_WRONLY, 0777)
-		defer file.Close()
-
-		if err != nil {
-			os.Exit(1)
-		}
+		createNotebook(path)
+		createFile(name, path)
 
 		fmt.Println(name + " folder created.")
 	},
+}
+
+func createNotebook(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.MkdirAll(path, os.ModePerm)
+	}
+}
+
+func createFile(name, path string) {
+	file, err := os.Create(filepath.Join(path, filepath.Base(name+".csv")))
+	defer file.Close()
+
+	if err != nil {
+		os.Exit(1)
+	}
 }
 
 func init() {
