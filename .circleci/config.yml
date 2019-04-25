@@ -9,7 +9,6 @@ jobs:
       - run:
           name: run build
           command: |
-            cd
             go build -v
       - run:
           name: run tests
