@@ -6,6 +6,9 @@ jobs:
       - image: circleci/golang:1.12
     steps:
       - checkout
+      - run: go get -u github.com/mitchellh/go-homedir
+      - run: go get -u github.com/spf13/cobra
+      - run: go get -u github.com/spf13/viper
       - run:
           name: run build
           command: |
