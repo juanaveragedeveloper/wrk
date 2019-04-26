@@ -1,7 +1,7 @@
 # Wrk 
-Wrk is an open source cli log tool designed for the developer lifestyle. To contribute submit a pull-request, issue, or feature request.
+Wrk is an open source cli log tool designed for the developer's terminal lifestyle. To contribute submit a pull-request, issue, or feature request.
 
-# Getting started 
+## Getting started
 To get wrking simply go to the [release](https://github.com/juanaveragedeveloper/wrk/releases) page and download the latest release for your OS. Then move it to the directory of where you'll be working at. Example 
 
 `mv wrkcli_windows_amd64.exe /work`
@@ -11,10 +11,11 @@ Also, it might help to rename the executable.
 `mv wrkcli_windows_amd64.exe wrk.exe`
 
 
-Then it is recommded to edit the `PATH` system environment variable to have 
+Then it is recommended to edit the `PATH` system environment variable to have 
 
 `/the/path/to/where/_wrk.exe_is_stored_in/wrk.exe`
 
+## Setup and basic commands
 Now, 
 
 `> wrk setup`
@@ -54,11 +55,13 @@ and start logging away
 There are a lot of ways wrk can be improved. Here are some that the team has thought of so far 
 
 #### Wishlist
-1.) Vim / terminal text editor of choice to input long messages. 
-2.) Storage of logs in a DB either or local <up to user to configure / login>.
-3.) Wrking outside of the 'setup' directory. 
-4.) Filtering of logs based upon 'time' and 'tag(s)'
-5.) Task start/end time `wrk task -n "debugging" -st' , ` `wrk task -n "debugging" -stp` 
+<ol>
+  <li>Vim / terminal text editor of choice to input long messages.</li>
+  <li>Storage of logs in a DB either or local <up to user to configure / login></li>
+  <li>Wrking outside of the 'setup' directory. </li>
+  <li>Filtering of logs based upon 'time' and 'tag(s)'</li>
+  <li>Task start/end time `wrk task -n "debugging" -st' , ` `wrk task -n "debugging" -stp` </li>
+</ol>
 
 
 
