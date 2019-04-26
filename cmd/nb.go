@@ -44,32 +44,37 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var c conf
 		c.getConf()
-		fmt.Println(c)
+		fmt.Println(c.CurrentPath)
 
 		name, _ := cmd.Flags().GetString("name")
-		swtch, _ := cmd.Flags().GetString("switch")
+		folderSwitch, _ := cmd.Flags().GetString("switch")
 
 		//Creating new notebook/csv command
 		if name != "" {
-			path := filepath.Join("/Users/nguyquoc/go/src/wrk/", name)
-
-			createNotebook(path)
+			path := filepath.Join(c.BasePath, "nb", name)
+			basePath := c.BasePath
+			createNotebook(basePath, path, name)
 			createFile(name, path)
 
 			fmt.Println(name + " folder created.")
 		}
 
 		//Switch to another notebook command
-		if swtch != "" {
-			fmt.Println("Switching to notebook - " + swtch)
+		if folderSwitch != "" {
+			basePath := c.BasePath
+			newPath := filepath.Join(c.BasePath, "nb", folderSwitch, folderSwitch+".csv")
+			testYaml(basePath, newPath)
+			fmt.Println("Switching to notebook - " + folderSwitch)
 		}
 	},
 }
 
-func createNotebook(path string) {
+func createNotebook(basePath, path, name string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		os.MkdirAll(path, os.ModePerm)
 	}
+	switchPath := filepath.Join(path, name+".csv")
+	testYaml(basePath, switchPath)
 }
 
 func createFile(name, path string) {
@@ -82,16 +87,45 @@ func createFile(name, path string) {
 }
 
 func (c *conf) getConf() *conf {
-	yamlFile, err := ioutil.ReadFile("conf.yaml")
+	os.Chdir(".config")
+	yamlFile, err := ioutil.ReadFile("config.yaml")
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 	}
-	err = yaml.Unmarshal(yamlFile, c)
+	err = yaml.Unmarshal(yamlFile, &c)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
 
 	return c
+}
+
+func testYaml(basePath, path string) {
+	os.Chdir(".config")
+	// configfolder, _ := os.Getwd()
+	// configfolder = configfolder + ".config"
+	//fmt.Println(configfolder)
+
+	var err = os.Remove("config.yaml")
+	if err != nil {
+		fmt.Printf("[ERR] %v", err)
+		return
+	}
+
+	file, err := os.Create("config.yaml")
+	if err != nil {
+		fmt.Printf("[ERR] %v", err)
+		return
+	}
+	defer file.Close()
+
+	//os.Chdir(".config")
+	str := fmt.Sprintf("basePath: %s\ncurrentNotebook: %s", basePath, path)
+	data := []byte(str)
+	err = ioutil.WriteFile("config.yaml", data, 0644)
+	if err != nil {
+		fmt.Printf("[ERR %v", err)
+	}
 }
 
 func init() {
