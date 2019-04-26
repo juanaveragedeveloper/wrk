@@ -51,7 +51,7 @@ to quickly create a Cobra application.`,
 
 		var configuration conf
 		workingdirectory, _ := os.Getwd()
-		configFile := workingdirectory + "\\.config\\config.yml"
+		configFile := workingdirectory + "\\.config\\config.yaml"
 		yamlFile, err := ioutil.ReadFile(configFile)
 
 		if err != nil {
@@ -66,9 +66,6 @@ to quickly create a Cobra application.`,
 		}
 
 		fmt.Println(configuration.Currentnotebook)
-		path := strings.Split(configuration.Currentnotebook, "\\")
-		length := len(path)
-		notebook := "\\" + path[length-1] + ".csv"
 
 		if message != "" {
 			if find != "" {
@@ -79,7 +76,7 @@ to quickly create a Cobra application.`,
 			now := time.Now()
 			formattedtime := fmt.Sprintf("%d/%02d/%02dT%02d:%02d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute())
 
-			f, err := os.OpenFile(configuration.Currentnotebook+notebook, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+			f, err := os.OpenFile(configuration.Currentnotebook, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 			if err != nil {
 				fmt.Println("Error: ", err)
 				return
@@ -94,7 +91,7 @@ to quickly create a Cobra application.`,
 		}
 
 		if find != "" {
-			f, _ := os.Open(configuration.Currentnotebook + notebook)
+			f, _ := os.Open(configuration.Currentnotebook)
 
 			r := csv.NewReader(bufio.NewReader(f))
 
