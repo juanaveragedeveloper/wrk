@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type conf struct {
+type config struct {
 	BasePath    string `yaml:"basePath"`
 	CurrentPath string `yaml:"currentPath"`
 }
@@ -42,7 +42,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var c conf
+		var c config
 		c.getConf()
 		fmt.Println(c.CurrentPath)
 
@@ -86,7 +86,7 @@ func createFile(name, path string) {
 	}
 }
 
-func (c *conf) getConf() *conf {
+func (c *config) getConf() *config {
 	os.Chdir(".config")
 	yamlFile, err := ioutil.ReadFile("config.yaml")
 	if err != nil {
