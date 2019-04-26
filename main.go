@@ -14,7 +14,6 @@
 
 package main
 
-// import "github.com/juanaveragedeveloper
 import "github.com/juanaveragedeveloper/wrk/cmd"
 
 func main() {
